@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aruma Beauty AI</title>
+  <style>
+    :root{
+      --fuchsia:#D80068;
+      --fuchsia-dark:#a9004d;
+      --fuchsia-soft:#fce7f3;
+      --bg:#f6f6f8;
+      --card:#ffffff;
+      --muted:#6a6a76;
+      --text:#191919;
+      --line:#ececef;
+      --success:#24a148;
+      --warning:#f3b318;
+      --shadow:0 14px 30px rgba(25,25,25,.08);
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    html,body{
+      margin:0;
+      min-height:100%;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f3f5;
+      color:var(--text);
+    }
+
+    body{
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      padding:20px;
+    }
+
+    .app{
+      width:100%;
+      max-width:430px;
+      min-height: 900px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:28px;
+      overflow:hidden;
+      box-shadow:0 30px 80px rgba(0,0,0,.08);
+      position:relative;
+    }
+
+    .screen{
+      display:none;
+      min-height:900px;
+      background:var(--bg);
+      position:relative;
+    }
+
+    .screen.active{
+      display:block;
+    }
+
+    .padding{
+      padding:20px 18px 100px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:20px 18px 12px;
+      background:#fff;
+    }
+
+    .back-btn, .icon-btn{
+      border:none;
+      background:transparent;
+      color:var(--text);
+      font-size:22px;
+      cursor:pointer;
+    }
+
+    .title{
+      font-weight:700;
+      font-size:18px;
+      letter-spacing:0.3px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:18px;
+      padding-top:80px;
+      background: var(--fuchsia);
+      min-height:900px;
+      color:#fff;
+    }
+
+    .logo{
+      width:110px;
+      height:110px;
+      border-radius:28px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(255,255,255,.1);
+      border:2px solid rgba(255,255,255,.6);
+      font-size:56px;
+      font-weight:700;
+      font-family: Georgia, serif;
+      position:relative;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
+    }
+
+    .logo::before{
+      content:"A";
+      color:#fff;
+    }
+
+    .logo::after{
+      content:"";
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      background:#fff;
+      position:absolute;
+      right:18px;
+      bottom:18px;
+      box-shadow:-22px -8px 0 0 rgba(255,255,255,.25);
+    }
+
+    .welcome-text{
+      text-align:center;
+      max-width:280px;
+      font-size:18px;
+      line-height:1.5;
+      font-weight:700;
+    }
+
+    .btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      border-radius:14px;
+      padding:16px 20px;
+      font-weight:700;
+      font-size:16px;
+      transition:.2s ease;
+      width:100%;
+      max-width:300px;
+    }
+
+    .btn.primary{
+      background:#fff;
+      color:var(--fuchsia);
+      box-shadow: 0 8px 24px rgba(0,0,0,.07);
+    }
+
+    .btn.secondary{
+      background:transparent;
+      color:#fff;
+      border:1.5px solid rgba(255,255,255,.7);
+    }
+
+    .btn:hover{
+      transform: translateY(-1px);
+    }
+
+    .stack{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      width:100%;
+      align-items:center;
+      margin-top: 10px;
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #f5d5e8 0%, #f9edf5 32%, #fff 100%);
+      border-radius:20px;
+      padding:18px;
+      box-shadow:var(--shadow);
+      border:1px solid #f2d4e5;
+      margin-bottom:18px;
+    }
+
+    .hero h3{
+      margin:0 0 8px;
+      font-size:18px;
+      color:var(--text);
+    }
+
+    .hero .mini{
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:16px;
+    }
+
+    .hero-card{
+      background:linear-gradient(135deg,#fff,#f6e8f1);
+      border-radius:16px;
+      padding:16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border:1px solid #f5d5e8;
+    }
+
+    .hero-badge{
+      display:inline-block;
+      background: var(--fuchsia);
+      color:#fff;
+      font-weight:700;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:12px;
+    }
+
+    .hero .cta{
+      margin-top:14px;
+      width:100%;
+      border:none;
+      border-radius:12px;
+      background:var(--fuchsia);
+      color:#fff;
+      padding:12px 14px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .location-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:10px 0 14px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .bell{
+      font-size:18px;
+      color:var(--text);
+      background: #f5f5f7;
+      border-radius:50%;
+      width:38px;
+      height:38px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .quick-actions{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+      margin:8px 0 18px;
+    }
+
+    .qa{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:14px;
+      min-height:80px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      gap:6px;
+      font-size:12px;
+      color:var(--text);
+      cursor:pointer;
+      padding:10px 4px;
+      text-align:center;
+    }
+
+    .qa .icon{
+      font-size:22px;
+    }
+
+    .search-box{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px 16px;
+      color:var(--muted);
+      font-size:14px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:18px;
+    }
+
+    .section-title{
+      margin:0 0 12px;
+      font-size:18px;
+      font-weight:700;
+    }
+
+    .section-label{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin:10px 0 12px;
+      font-size:15px;
+      color:var(--muted);
+    }
+
+    .product-list{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .product-card{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      box-shadow:0 8px 18px rgba(0,0,0,.03);
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+
+    .product-thumb{
+      width:72px;
+      height:72px;
+      border-radius:16px;
+      background:linear-gradient(135deg,#f7d7e9,#f3f3f7);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:32px;
+    }
+
+    .product-info{
+      flex:1;
+      min-width:0;
+    }
+
+    .product-name{
+      font-weight:700;
+      margin-bottom:6px;
+      font-size:15px;
+    }
+
+    .meta{
+      color:var(--muted);
+      font-size:12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:6px;
+      flex-wrap:wrap;
+    }
+
+    .stock-pill{
+      border-radius:999px;
+      padding:5px 10px;
+      font-size:11px;
+      font-weight:700;
+      display:inline-block;
+    }
+
+    .stock-pill.green{
+      background:#eaf9ef;
+      color:var(--success);
+    }
+
+    .stock-pill.yellow{
+      background:#fff4d6;
+      color:#9e7300;
+    }
+
+    .product-actions{
+      display:flex;
+      gap:8px;
+      margin-top:12px;
+    }
+
+    .small-btn{
+      border:none;
+      padding:9px 12px;
+      border-radius:10px;
+      font-weight:700;
+      font-size:12px;
+      cursor:pointer;
+      background:#f2f2f4;
+      color:var(--text);
+    }
+
+    .small-btn.primary{
+      background:var(--fuchsia);
+      color:#fff;
+    }
+
+    .bottom-nav{
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      height:72px;
+      background:#fff;
+      border-top:1px solid var(--line);
+      display:grid;
+      grid-template-columns: repeat(5,1fr);
+      align-items:center;
+      padding:0 10px;
+      z-index:20;
+    }
+
+    .nav-item{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      color:var(--muted);
+      font-size:11px;
+      cursor:pointer;
+      height:100%;
+    }
+
+    .nav-item.active{
+      color:var(--fuchsia);
+      font-weight:700;
+    }
+
+    .nav-item .nav-icon{
+      font-size:20px;
+    }
+
+    .camera-screen{
+      background:#111;
+      color:#fff;
+      min-height:900px;
+      padding-bottom:100px;
+    }
+
+    .camera-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:20px 18px 14px;
+      background:rgba(17,17,17,.5);
+      backdrop-filter:blur(4px);
+      position:sticky;
+      top:0;
+      z-index:10;
+    }
+
+    .camera-layer{
+      position:relative;
+      height:650px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      overflow:hidden;
+      padding:0 20px;
+    }
+
+    .camera-surface{
+      width:100%;
+      max-width:320px;
+      height:460px;
+      border-radius:28px;
+      border:2px solid rgba(255,255,255,.7);
+      background: radial-gradient(circle at center, rgba(0,0,0,.1), rgba(0,0,0,.5));
+      position:relative;
+    }
+
+    .face-grid{
+      position:absolute;
+      inset:20px 20px 20px 20px;
+      border:2px solid rgba(255,255,255,.45);
+      border-radius:44% 44% 48% 48% / 32% 32% 52% 52%;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.25);
+    }
+
+    .face-grid::before,
+    .face-grid::after{
+      content:"";
+      position:absolute;
+      background:rgba(255,255,255,.3);
+    }
+
+    .face-grid::before{
+      left:50%;
+      top:12%;
+      width:2px;
+      height:48%;
+      transform:translateX(-50%);
+    }
+
+    .face-grid::after{
+      top:50%;
+      left:12%;
+      width:76%;
+      height:2px;
+      transform:translateY(-50%);
+    }
+
+    .scan-indicator{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:80%;
+      height:120px;
+      border-radius:50%;
+      border:2px solid rgba(216,0,104,.9);
+      box-shadow:0 0 20px rgba(216,0,104,.5);
+    }
+
+    .scan-status{
+      padding:0 20px;
+      text-align:center;
+      color:#fff;
+    }
+
+    .status-bar{
+      max-width:280px;
+      margin:16px auto 16px;
+      height:8px;
+      background:rgba(255,255,255,.2);
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .status-bar > span{
+      display:block;
+      height:100%;
+      width:18%;
+      background:var(--fuchsia);
+      border-radius:inherit;
+      animation: scan 2s linear infinite;
+    }
+
+    @keyframes scan{
+      0%{transform:translateX(-40%);}
+      50%{transform:translateX(200%);}
+      100%{transform:translateX(-40%);}
+    }
+
+    .camera-btn{
+      position:absolute;
+      left:50%;
+      bottom:24px;
+      transform:translateX(-50%);
+      width:220px;
+      border:none;
+      border-radius:999px;
+      background:var(--fuchsia);
+      color:#fff;
+      font-weight:700;
+      padding:18px 18px;
+      font-size:17px;
+      cursor:pointer;
+      box-shadow:0 16px 30px rgba(216,0,104,.4);
+    }
+
+    .result-panel{
+      background:#fff;
+      border-radius:30px 30px 0 0;
+      min-height:300px;
+      margin-top:-20px;
+      position:relative;
+      z-index:2;
+      padding:24px 18px 90px;
+    }
+
+    .diagnostic{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      background:#f7f7f9;
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:16px;
+      margin-bottom:18px;
+    }
+
+    .tone{
+      font-size:14px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    .tone-hl{
+      font-size:26px;
+      font-weight:700;
+      color:var(--text);
+    }
+
+    .before-after{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin:18px 0;
+    }
+
+    .before-after .box{
+      background:#f8f8f9;
+      border:1px solid var(--line);
+      border-radius:16px;
+      min-height:100px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+      color:var(--muted);
+    }
+
+    .swatches{
+      display:flex;
+      gap:10px;
+      margin:18px 0 12px;
+    }
+
+    .swatch{
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      border:2px solid rgba(0,0,0,.08);
+    }
+
+    .suggestions{
+      display:flex;
+      gap:10px;
+      overflow-x:auto;
+      padding-bottom:8px;
+      margin:12px 0;
+    }
+
+    .suggestion-card{
+      min-width:140px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:10px;
+      box-shadow:0 8px 18px rgba(0,0,0,.04);
+    }
+
+    .mini-thumb{
+      width:100%;
+      height:90px;
+      background:linear-gradient(135deg,#f6dfe9,#f3f3f7);
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      margin-bottom:8px;
+    }
+
+    .small-title{
+      font-weight:700;
+      font-size:14px;
+      margin:0 0 6px;
+    }
+
+    .small-sub{
+      color:var(--muted);
+      font-size:11px;
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(17,17,17,.42);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:40;
+      padding:20px;
+    }
+
+    .modal.active{
+      display:flex;
+    }
+
+    .modal-card{
+      background:#fff;
+      width:100%;
+      max-width:350px;
+      border-radius:18px;
+      padding:22px 18px;
+      text-align:center;
+      box-shadow:0 28px 70px rgba(0, 0, 0, .28);
+    }
+
+    .modal-card h3{
+      margin:0 0 10px;
+      font-size:22px;
+    }
+
+    .modal-card p{
+      margin:0 0 18px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .modal-card .btn{
+      max-width:100%;
+    }
+
+    .store-layout{
+      background:#fff;
+      padding:18px 18px 90px;
+    }
+
+    .map-box{
+      background:linear-gradient(180deg,#f8f8fa,#eef1f8);
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:16px;
+      margin-top:16px;
+      position:relative;
+      min-height:300px;
+    }
+
+    .aisle{
+      position:absolute;
+      background:#f0f1f6;
+      border-radius:12px;
+      border:1px solid #e1e2e8;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      font-weight:700;
+      color:var(--muted);
+    }
+
+    .aisle.a1{ left:20px; top:20px; width:120px; height:90px; }
+    .aisle.a2{ right:20px; top:20px; width:120px; height:90px; }
+    .aisle.a3{ left:20px; bottom:20px; width:120px; height:90px; }
+    .aisle.a4{ right:20px; bottom:20px; width:120px; height:90px; }
+
+    .marker{
+      position:absolute;
+      width:14px;
+      height:14px;
+      background:var(--fuchsia);
+      border-radius:50%;
+      box-shadow:0 0 0 8px rgba(216,0,104,.15);
+    }
+
+    .marker.pos1 { left:60%; top:38%; }
+    .marker.pos2 { left:30%; top:62%; }
+
+    .info-box{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px 16px;
+      margin-top:18px;
+      box-shadow:0 8px 18px rgba(0,0,0,.03);
+    }
+
+    .switch{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 0;
+      border-bottom:1px solid var(--line);
+      font-weight:600;
+    }
+
+    .switch:last-child{
+      border-bottom:none;
+    }
+
+    .switch input{
+      width:48px;
+      height:28px;
+      accent-color: var(--fuchsia);
+    }
+
+    .profile-box{
+      background:#fff;
+      border-radius:20px;
+      border:1px solid var(--line);
+      padding:16px;
+      display:flex;
+      gap:14px;
+      align-items:center;
+      margin-bottom:18px;
+    }
+
+    .avatar{
+      width:62px;
+      height:62px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#f8d8e7,#efeff3);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:24px;
+    }
+
+    .profile-meta h3{
+      margin:0 0 3px;
+      font-size:20px;
+    }
+
+    .profile-meta p{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .history-card{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      margin-bottom:14px;
+    }
+
+    .history-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-top:10px;
+    }
+
+    .history-row .tag{
+      background:#f4eff4;
+      color:var(--fuchsia);
+      padding:8px 10px;
+      border-radius:10px;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .hide{
+      display:none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="screen active" id="welcome">
+      <div class="brand">
+        <div class="logo" aria-label="Logo Aruma"></div>
+
+        <div class="welcome-text">
+          Tu asistente inteligente de belleza y stock en tiempo real
+        </div>
+
+        <div class="stack">
+          <button class="btn primary" data-target="home">Iniciar Sesión</button>
+          <button class="btn secondary" data-target="home">Crear Cuenta Nueva</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="home">
+      <div class="topbar">
+        <div></div>
+        <div class="title">Aruma</div>
+        <div class="bell">🔔</div>
+      </div>
+
+      <div class="padding">
+        <div class="location-row">
+          <span>📍 Tienda Aruma - Larcomar</span>
+          <span>Hoy</span>
+        </div>
+
+        <div class="hero">
+          <h3>Descubre tu colorimetría ideal con IA</h3>
+          <div class="mini">Análisis facial + tono de piel + best match</div>
+          <div class="hero-card">
+            <div>
+              <div class="hero-badge">IA Beauty</div>
+            </div>
+            <div style="font-size:34px;">✨</div>
+          </div>
+          <button class="cta" data-target="scanner">Escanear mi rostro</button>
+        </div>
+
+        <div class="quick-actions">
+          <div class="qa" data-target="home">
+            <div class="icon">🧴</div>
+            <div>Cuidado de la piel</div>
+          </div>
+          <div class="qa" data-target="home">
+            <div class="icon">💄</div>
+            <div>Maquillaje</div>
+          </div>
+          <div class="qa" data-target="home">
+            <div class="icon">💇‍♀️</div>
+            <div>Cuidado del cabello</div>
+          </div>
+          <div class="qa" data-target="home">
+            <div class="icon">🌸</div>
+            <div>Fragancias</div>
+          </div>
+        </div>
+
+        <div class="search-box">🔎 ¿Qué producto buscas hoy? (Verifica stock en tienda)</div>
+
+        <div class="section-label">
+          <span>Productos sugeridos</span>
+          <span style="color:var(--fuchsia); font-weight:700;">Ver más</span>
+        </div>
+
+        <div class="product-list">
+          <div class="product-card">
+            <div class="product-thumb">💄</div>
+            <div class="product-info">
+              <div class="product-name">Labial Mate Desnudo</div>
+              <div class="meta">
+                <span>Marca X</span>
+                <span class="stock-pill green">Disponible</span>
+              </div>
+              <div class="meta">
+                <span>S/72.00</span>
+                <span>3 unidades</span>
+              </div>
+              <div class="product-actions">
+                <button class="small-btn primary" data-action="reserve">Apartar</button>
+                <button class="small-btn" data-target="store">Ubicación</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div class="product-thumb">🎨</div>
+            <div class="product-info">
+              <div class="product-name">Paleta de Sombras Cobres</div>
+              <div class="meta">
+                <span>Última edición</span>
+                <span class="stock-pill yellow">Pocas unidades</span>
+              </div>
+              <div class="meta">
+                <span>S/118.00</span>
+                <span>2 restantes</span>
+              </div>
+              <div class="product-actions">
+                <button class="small-btn primary" data-action="reserve">Apartar</button>
+                <button class="small-btn" data-target="store">Ubicación</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item active" data-target="home"><div class="nav-icon">🏠</div><div>Inicio</div></div>
+        <div class="nav-item" data-target="scanner"><div class="nav-icon">✨</div><div>Smart IA</div></div>
+        <div class="nav-item" data-target="store"><div class="nav-icon">🛍️</div><div>Modo Tienda</div></div>
+        <div class="nav-item" data-target="sustainability"><div class="nav-icon">💚</div><div>Favoritos</div></div>
+        <div class="nav-item" data-target="profile"><div class="nav-icon">👤</div><div>Mi Perfil</div></div>
+      </div>
+    </section>
+
+    <section class="screen camera-screen" id="scanner">
+      <div class="camera-header">
+        <button class="back-btn" data-target="home">‹</button>
+        <div class="title" style="color:#fff;">Tu Análisis de Rostro</div>
+        <div style="width:24px;"></div>
+      </div>
+
+      <div class="camera-layer">
+        <div class="camera-surface">
+          <div class="face-grid"></div>
+          <div class="scan-indicator"></div>
+        </div>
+      </div>
+
+      <div class="scan-status">
+        <div style="font-weight:700; font-size:18px;">Analizando subtono de piel y proporciones...</div>
+        <div class="status-bar"><span></span></div>
+      </div>
+
+      <button class="camera-btn" id="startScan">Iniciar Escaneo IA</button>
+    </section>
+
+    <section class="screen" id="results">
+      <div class="topbar">
+        <button class="back-btn" data-target="scanner">‹</button>
+        <div class="title">Tu Colorimetría</div>
+        <div style="width:24px;"></div>
+      </div>
+
+      <div class="result-panel">
+        <div class="diagnostic">
+          <div>
+            <div class="tone">Estación cromática detectada</div>
+            <div class="tone-hl">Cálido / Otoño</div>
+          </div>
+          <div style="font-size:30px;">☀️</div>
+        </div>
+
+        <div class="before-after">
+          <div class="box">Antes</div>
+          <div class="box">Después</div>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+          <span style="font-size:15px; font-weight:700;">Filtros de luz</span>
+          <span style="color:var(--muted); font-size:12px;">Luz Día / Luz Noche</span>
+        </div>
+
+        <div class="swatches">
+          <div class="swatch" style="background:#F2C7A3;"></div>
+          <div class="swatch" style="background:#D7B399;"></div>
+          <div class="swatch" style="background:#B87664;"></div>
+          <div class="swatch" style="background:#EFC8AF;"></div>
+          <div class="swatch" style="background:#CB7A67;"></div>
+        </div>
+
+        <div class="section-label" style="margin-top:18px;">
+          <span>Productos recomendados</span>
+          <span style="color:var(--fuchsia); font-weight:700;">Ver todo</span>
+        </div>
+
+        <div class="suggestions">
+          <div class="suggestion-card">
+            <div class="mini-thumb">💄</div>
+            <div class="small-title">Labial Nude Cálido</div>
+            <div class="small-sub">Tonalidad: cálida</div>
+          </div>
+
+          <div class="suggestion-card">
+            <div class="mini-thumb">🎨</div>
+            <div class="small-title">Sombras Cobres</div>
+            <div class="small-sub">Matices cálidos</div>
+          </div>
+
+          <div class="suggestion-card">
+            <div class="mini-thumb">🌸</div>
+            <div class="small-title">Rubor Durazno</div>
+            <div class="small-sub">Glowy finish</div>
+          </div>
+        </div>
+
+        <button class="btn primary" data-target="stock" style="max-width:100%; margin-top:10px;">Verificar Stock de estos productos en Tienda</button>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item" data-target="home"><div class="nav-icon">🏠</div><div>Inicio</div></div>
+        <div class="nav-item active" data-target="scanner"><div class="nav-icon">✨</div><div>Smart IA</div></div>
+        <div class="nav-item" data-target="store"><div class="nav-icon">🛍️</div><div>Modo Tienda</div></div>
+        <div class="nav-item" data-target="sustainability"><div class="nav-icon">💚</div><div>Favoritos</div></div>
+        <div class="nav-item" data-target="profile"><div class="nav-icon">👤</div><div>Mi Perfil</div></div>
+      </div>
+    </section>
+
+    <section class="screen" id="stock">
+      <div class="topbar">
+        <button class="back-btn" data-target="results">‹</button>
+        <div class="title">Disponibilidad en Tiendas</div>
+        <div style="width:24px;"></div>
+      </div>
+
+      <div class="padding">
+        <div class="search-box" style="margin-top:6px;">📍 Aruma - Óvalo Higuereta</div>
+
+        <div class="product-list">
+          <div class="product-card">
+            <div class="product-thumb">💄</div>
+            <div class="product-info">
+              <div class="product-name">Labial Mate Desnudo</div>
+              <div class="meta">
+                <span>Marca X</span>
+                <span class="stock-pill green">Disponible en estante</span>
+              </div>
+              <div class="meta">
+                <span>S/72.00</span>
+                <span>3 unidades</span>
+              </div>
+              <div class="product-actions">
+                <button class="small-btn" data-target="store">Ver ubicación</button>
+                <button class="small-btn primary" data-action="reserve">Apartar</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div class="product-thumb">🎨</div>
+            <div class="product-info">
+              <div class="product-name">Paleta de Sombras Cobres</div>
+              <div class="meta">
+                <span>Marca Y</span>
+                <span class="stock-pill yellow">Últimas unidades</span>
+              </div>
+              <div class="meta">
+                <span>S/118.00</span>
+                <span>2 restantes</span>
+              </div>
+              <div class="product-actions">
+                <button class="small-btn" data-target="store">Ver ubicación</button>
+                <button class="small-btn primary" data-action="reserve">Apartar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item" data-target="home"><div class="nav-icon">🏠</div><div>Inicio</div></div>
+        <div class="nav-item" data-target="scanner"><div class="nav-icon">✨</div><div>Smart IA</div></div>
+        <div class="nav-item active" data-target="store"><div class="nav-icon">🛍️</div><div>Modo Tienda</div></div>
+        <div class="nav-item" data-target="sustainability"><div class="nav-icon">💚</div><div>Favoritos</div></div>
+        <div class="nav-item" data-target="profile"><div class="nav-icon">👤</div><div>Mi Perfil</div></div>
+      </div>
+    </section>
+
+    <section class="screen" id="store">
+      <div class="topbar">
+        <button class="back-btn" data-target="stock">‹</button>
+        <div class="title">Modo Tienda</div>
+        <div style="width:24px;"></div>
+      </div>
+
+      <div class="store-layout">
+        <div style="font-weight:700; font-size:18px;">Modo Tienda Activo - Óvalo Higuereta</div>
+        <div class="map-box">
+          <div class="aisle a1">Sección Base</div>
+          <div class="aisle a2">Labiales</div>
+          <div class="aisle a3">Skincare</div>
+          <div class="aisle a4">Fragancias</div>
+
+          <div class="marker pos1"></div>
+          <div class="marker pos2"></div>
+        </div>
+
+        <div class="info-box">
+          <div style="font-weight:700; margin-bottom:8px;">Ruta recomendada</div>
+          <div style="color:var(--muted); line-height:1.6;">
+            Dirígete al Pasillo 3 — Sección Labiales y Rostro  
+            Estás a 2 metros de tu producto recomendado.
+          </div>
+        </div>
+
+        <button class="btn primary" data-target="profile" style="max-width:100%; margin-top:16px;">Escanear código de producto</button>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item" data-target="home"><div class="nav-icon">🏠</div><div>Inicio</div></div>
+        <div class="nav-item" data-target="scanner"><div class="nav-icon">✨</div><div>Smart IA</div></div>
+        <div class="nav-item active" data-target="store"><div class="nav-icon">🛍️</div><div>Modo Tienda</div></div>
+        <div class="nav-item" data-target="sustainability"><div class="nav-icon">💚</div><div>Favoritos</div></div>
+        <div class="nav-item" data-target="profile"><div class="nav-icon">👤</div><div>Mi Perfil</div></div>
+      </div>
+    </section>
+
+    <section class="screen" id="sustainability">
+      <div class="topbar">
+        <button class="back-btn" data-target="home">‹</button>
+        <div class="title">Belleza consciente</div>
+        <div style="width:24px;"></div>
+      </div>
+
+      <div class="padding">
+        <div class="section-title">Preferencias activas</div>
+
+        <div class="info-box">
+          <div class="switch">
+            <span>Cruelty-Free / No testeado en animales</span>
+            <input type="checkbox" checked />
+          </div>
+          <div class="switch">
+            <span>Libre de parabenos</span>
+            <input type="checkbox" checked />
+          </div>
+          <div class="switch">
+            <span>Fórmula vegana</span>
+            <input type="checkbox" checked />
+          </div>
+        </div>
+
+        <div class="history-card" style="margin-top:18px;">
+          <div style="font-weight:700;">Eco-Refill y reciclaje</div>
+          <div class="history-row">
+            <span>Envases devueltos</span>
+            <span class="tag">12 unidades</span>
+          </div>
+          <div class="history-row">
+            <span>Puntos acumulados</span>
+            <span class="tag">1,280 pts</span>
+          </div>
+        </div>
+
+        <button class="btn primary" data-target="home" style="margin-top:20px; max-width:100%;">Guardar preferencia de búsqueda</button>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item" data-target="home"><div class="nav-icon">🏠</div><div>Inicio</div></div>
+        <div class="nav-item" data-target="scanner"><div class="nav-icon">✨</div><div>Smart IA</div></div>
+        <div class="nav-item" data-target="store"><div class="nav-icon">🛍️</div><div>Modo Tienda</div></div>
+        <div class="nav-item active" data-target="sustainability"><div class="nav-icon">💚</div><div>Favoritos</div></div>
+        <div class="nav-item" data-target="profile"><div class="nav-icon">👤</div><div>Mi Perfil</div></div>
+      </div>
+    </section>
+
+    <section class="screen" id="profile">
+      <div class="topbar">
+        <button class="back-btn" data-target="home">‹</button>
+        <div class="title">Mi Perfil</div>
+        <div style="width:24px;"></div>
+      </div>
+
+      <div class="padding">
+        <div class="profile-box">
+          <div class="avatar">👩</div>
+          <div class="profile-meta">
+            <h3>Valeria R.</h3>
+            <p>Socia Aruma • Otoño cálido</p>
+          </div>
+        </div>
+
+        <div class="history-card">
+          <div style="font-weight:700;">Mis diagnósticos anteriores</div>
+          <div class="history-row">
+            <span>Colorimetría IA</span>
+            <span class="tag">Junio</span>
+          </div>
+          <div class="history-row">
+            <span>Rutina de verano</span>
+            <span class="tag">Guardada</span>
+          </div>
+        </div>
+
+        <div class="history-card">
+          <div style="font-weight:700;">Mis rutinas favoritas</div>
+          <div class="history-row">
+            <span>Glow cálido</span>
+            <span class="tag">Labial + rubor</span>
+          </div>
+          <div class="history-row">
+            <span>Base luminosa</span>
+            <span class="tag">Fórmula ligera</span>
+          </div>
+        </div>
+
+        <div class="history-card">
+          <div style="font-weight:700;">Reservas y compras</div>
+          <div class="history-row">
+            <span>Labial Mate Desnudo</span>
+            <span class="tag">Reservado</span>
+          </div>
+          <div class="history-row">
+            <span>Paleta de Sombras Cobres</span>
+            <span class="tag">Comprado</span>
+          </div>
+        </div>
+
+        <button class="btn secondary" data-target="welcome" style="background:var(--fuchsia); color:#fff; max-width:100%; margin-top:16px;">Cerrar sesión</button>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item" data-target="home"><div class="nav-icon">🏠</div><div>Inicio</div></div>
+        <div class="nav-item" data-target="scanner"><div class="nav-icon">✨</div><div>Smart IA</div></div>
+        <div class="nav-item" data-target="store"><div class="nav-icon">🛍️</div><div>Modo Tienda</div></div>
+        <div class="nav-item" data-target="sustainability"><div class="nav-icon">💚</div><div>Favoritos</div></div>
+        <div class="nav-item active" data-target="profile"><div class="nav-icon">👤</div><div>Mi Perfil</div></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal" id="successModal">
+    <div class="modal-card">
+      <h3>¡Reserva exitosa!</h3>
+      <p>Tu producto ha sido reservado para recoger en la tienda Aruma - Óvalo Higuereta.</p>
+      <button class="btn primary" data-close-modal>Entendido</button>
+    </div>
+  </div>
+
+  <script>
+    const screens = document.querySelectorAll('.screen');
+    const navItems = document.querySelectorAll('.nav-item');
+    const reserveButtons = document.querySelectorAll('[data-action="reserve"]');
+    const modal = document.getElementById('successModal');
+
+    function showScreen(id){
+      screens.forEach(screen => {
+        screen.classList.toggle('active', screen.id === id);
+      });
+
+      navItems.forEach(item => {
+        item.classList.toggle('active', item.dataset.target === id);
+      });
+    }
+
+    document.body.addEventListener('click', (event) => {
+      const target = event.target.closest('[data-target]');
+      if (target) {
+        const screenId = target.dataset.target;
+        showScreen(screenId);
+      }
+
+      const closeModalBtn = event.target.closest('[data-close-modal]');
+      if (closeModalBtn) {
+        modal.classList.remove('active');
+      }
+    });
+
+    reserveButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        modal.classList.add('active');
+      });
+    });
+
+    document.getElementById('startScan').addEventListener('click', () => {
+      setTimeout(() => {
+        showScreen('results');
+      }, 1500);
+    });
+  </script>
+</body>
+</html>
